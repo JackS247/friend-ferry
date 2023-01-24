@@ -5,14 +5,14 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
 const cors = require("cors");
-const postsRoute = require("./routes/posts");
+// const postsRoute = require("./routes/posts");
 const userRouter = require("./routes/userRoute");
 // const User = require("./models/User");
 
 // middlewares
 app.use(express.json());
 app.use(cors());
-app.use("/posts", postsRoute);
+// app.use("/posts", postsRoute);
 app.use("/users", userRouter);
 
 // express.urlencoded({extended: false})
