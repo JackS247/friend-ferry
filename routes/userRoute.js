@@ -7,7 +7,7 @@ const {
   createUser,
   updateUser,
   deleteUser,
-} = require("../controllers/studentControllers");
+} = require("../controllers/userControllers");
 
 app.route("/").get(getAllUsers).post(createUser);
 

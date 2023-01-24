@@ -1,4 +1,5 @@
-const Students = require("../models/user");
+const Users = require("../models/User.js");
+const mongoose = require("mongoose");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -16,9 +17,9 @@ const getAllUsers = async (req, res) => {
 const getOneUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const student = await User.findById(req.params.id);
+    const user = await Users.findById(id);
     res.status(200).json({
-      student,
+      user,
     });
   } catch (error) {
     res.status(500).json({
@@ -27,11 +28,11 @@ const getOneUser = async (req, res) => {
   }
 };
 
-const createStudent = async (req, res) => {
+const createUser = async (req, res) => {
   try {
     const { name, lastName, email, password } = req.body;
     console.log("req.body:", req.body);
-    const student = await User.create({ name, lastName, email, password });
+    const user = await Users.create({ name, lastName, email, password });
     res.status(201).json({
       success: true,
       user,
@@ -45,12 +46,12 @@ const createStudent = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const student = await User.findByIdandUpdate(req.params.id, req.body, {
+    const user = await Users.findOneAndUpdate(req.params.id, req.body, {
       new: true,
     });
     res.status(200).json({
       success: true,
-      student,
+      user,
     });
   } catch (error) {
     res.status(500).json({
@@ -59,11 +60,12 @@ const updateUser = async (req, res) => {
   }
 };
 
-const deleteStudent = async (req, res) => {
+const deleteUser = async (req, res) => {
   try {
-    const student = await Users.findByIdandDelete(req.params.id);
+    const user = await Users.findOneAndDelete(req.params.id);
     res.status(200).json({
       response: "User eliminated successfully",
+      user,
     });
   } catch (error) {
     res.status(500).json({
@@ -76,6 +78,6 @@ module.exports = {
   getAllUsers,
   getOneUser,
   createUser,
-  updateUsers,
+  updateUser,
   deleteUser,
 };
