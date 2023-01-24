@@ -1,16 +1,36 @@
+// const express = require("express");
+// const app = express.Router();
+
+// const {
+//   getAllUsers,
+//   getOneUser,
+//   createUser,
+//   updateUser,
+//   deleteUser,
+// } = require("../controllers/userControllers");
+
+// app.route("/").get(getAllUsers).post(createUser);
+
+// app.route("/:id").get(getOneUser).put(updateUser).delete(deleteUser);
+
+// module.exports = app;
+
 const express = require("express");
-const app = express.Router();
 
 const {
-  getAllUsers,
-  getOneUser,
-  createUser,
-  updateUser,
-  deleteUser,
+  loginUser,
+  signUpUser,
 } = require("../controllers/userControllers");
 
-app.route("/").get(getAllUsers).post(createUser);
+const userRouter = express.Router();
 
-app.route("/:id").get(getOneUser).put(updateUser).delete(deleteUser);
+//Login
+userRouter.post("/login", loginUser);
 
-module.exports = app;
+//Signup
+userRouter.post("/signup", signUpUser);
+
+//get all users from database
+
+
+module.exports = userRouter;

@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const validator = require("validator");
 
 const { Schema } = mongoose;
 
@@ -6,30 +8,74 @@ const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    minLength: 2,
-    maxLength: 50,
   },
   lastName: {
     type: String,
     required: true,
-    minLength: 2,
-    maxLength: 50,
   },
   email: {
     type: String,
     required: true,
     unique: true,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      "Please enter a valid email",
-    ],
-    password: {
-      type: String,
-      required: true,
-      minLength: 8,
-      maxLength: 255,
-    },
+  },
+  password: {
+    type: String,
+    required: true,
   },
 });
+
+// creating a custom static method
+UserSchema.statics.signup = async function (name, lastName, email, password) {
+  //validation
+
+  const exists = await this.findOne({ email });
+
+  if (exists) {
+    throw Error("Email already in use");
+  }
+
+  if (!email || !password || !name || !lastName) {
+    throw Error("All fields must be filled");
+  }
+
+  if (!validator.isEmail(email)) {
+    throw Error("email is not valid");
+  }
+
+  if (!validator.isStrongPassword(password)) {
+    throw Error(
+      "Make sure to use at least 8 characters, one upper case letter, a number and a symbol"
+    );
+  }
+
+  const salt = await bcrypt.genSalt(10);
+
+  const hash = await bcrypt.hash(password, salt);
+
+  const user = await this.create({ name, lastName, email, password: hash });
+
+  return user;
+};
+
+// static custom login method
+UserSchema.statics.login = async function (email, password) {
+  if (!email || !password) {
+    throw Error("All fields must be filled");
+  }
+
+  const user = await this.findOne({ email });
+
+  if (!user) {
+    throw Error("Incorrect email");
+  }
+
+  const match = await bcrypt.compare(password, user.password);
+
+  if (!match) {
+    throw Error("Incorrect password");
+  }
+
+  return user;
+};
 
 module.exports = mongoose.model("User", UserSchema);

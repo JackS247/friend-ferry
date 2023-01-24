@@ -1,83 +1,40 @@
-const Users = require("../models/User");
+const User = require("../models/User");
 const mongoose = require("mongoose");
 
-const getAllUsers = async (req, res) => {
+const jwt = require("jsonwebtoken");
+
+const createToken = (id) => {
+  return jwt.sign({ id }, process.env.SECRET, { expiresIn: "1d" });
+};
+
+// login user
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const users = await Users.find();
-    res.status(200).json({
-      users,
-    });
+    const user = await User.login(email, password);
+
+    //create token
+    const token = createToken(user._id);
+
+    res.status(200).json({ email, token });
   } catch (error) {
-    res.status(500).json({
-      error,
-    });
+    res.status(400).json({ error: error.message, isItMe: "or is it youuu" });
   }
 };
 
-const getOneUser = async (req, res) => {
+// sign up user
+const signUpUser = async (req, res) => {
+  const { name, lastName, email, password } = req.body;
+
   try {
-    const { id } = req.params;
-    const user = await Users.findById(id);
-    res.status(200).json({
-      user,
-    });
+    const user = await User.signup(name, lastName, email, password);
+    //create token
+    const token = createToken(user.id);
+    res.status(200).json({ email, token });
   } catch (error) {
-    res.status(500).json({
-      error,
-    });
+    res.status(400).json({ error: error.message });
   }
 };
 
-const createUser = async (req, res) => {
-  try {
-    const { name, lastName, email, password } = req.body;
-    console.log("req.body:", req.body);
-    const user = await Users.create({ name, lastName, email, password });
-    res.status(201).json({
-      success: true,
-      user,
-    });
-  } catch (error) {
-    res.status(500).json({
-      error,
-    });
-  }
-};
-
-const updateUser = async (req, res) => {
-  try {
-    const user = await Users.findOneAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    res.status(200).json({
-      success: true,
-      user,
-    });
-  } catch (error) {
-    res.status(500).json({
-      error,
-    });
-  }
-};
-
-const deleteUser = async (req, res) => {
-  try {
-    const user = await Users.findOneAndDelete(req.params.id);
-    res.status(200).json({
-      response: "User eliminated successfully",
-      user,
-    });
-  } catch (error) {
-    res.status(500).json({
-      error,
-    });
-  }
-};
-
-module.exports = {
-  getAllUsers,
-  getOneUser,
-  createUser,
-  updateUser,
-  deleteUser,
-};
+module.exports = { loginUser, signUpUser };
