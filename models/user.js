@@ -13,6 +13,12 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  age: {
+    type: Number,
+    required: true,
+  },
+
   email: {
     type: String,
     required: true,
@@ -25,7 +31,13 @@ const UserSchema = new mongoose.Schema({
 });
 
 // creating a custom static method
-UserSchema.statics.signup = async function (name, lastName, email, password) {
+UserSchema.statics.signup = async function (
+  name,
+  lastName,
+  age,
+  email,
+  password
+) {
   //validation
 
   const exists = await this.findOne({ email });
@@ -34,7 +46,7 @@ UserSchema.statics.signup = async function (name, lastName, email, password) {
     throw Error("Email already in use");
   }
 
-  if (!email || !password || !name || !lastName) {
+  if (!email || !password || !name || !lastName || !age) {
     throw Error("All fields must be filled");
   }
 
@@ -52,7 +64,13 @@ UserSchema.statics.signup = async function (name, lastName, email, password) {
 
   const hash = await bcrypt.hash(password, salt);
 
-  const user = await this.create({ name, lastName, email, password: hash });
+  const user = await this.create({
+    name,
+    lastName,
+    age,
+    email,
+    password: hash,
+  });
 
   return user;
 };

@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 8080;
 const cors = require("cors");
 // const postsRoute = require("./routes/posts");
 const userRouter = require("./routes/userRoute");
+const companionRouter = require("./routes/companionRoute");
 // const User = require("./models/User");
 
 // middlewares
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(cors());
 // app.use("/posts", postsRoute);
 app.use("/users", userRouter);
+app.use("/companions", companionRouter);
 
 // express.urlencoded({extended: false})
 
