@@ -3,7 +3,7 @@ const connectDB = require("./dbinit");
 connectDB();
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = 8080 || process.env.PORT;
 const cors = require("cors");
 // const postsRoute = require("./routes/posts");
 const userRouter = require("./routes/userRoute");
